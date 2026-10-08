@@ -1,0 +1,19 @@
+{
+  "name": "inventory-management-system",
+  "version": "1.0.0",
+  "description": "A mini full-stack web app for managing products: Flask + SQLite on the backend, vanilla HTML/CSS/JS on the frontend, talking over a JSON REST API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write templates/index.html static/css/style.css static/js/script.js",
+    "format:check": "prettier --check templates/index.html static/css/style.css static/js/script.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "prettier": "^3.9.9"
+  }
+}
