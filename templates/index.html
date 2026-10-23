@@ -1,167 +1,123 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stockroom - Inventory Management</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
-  </head>
-  <body>
-    <div id="toast-container" aria-live="polite"></div>
+<!DOCTYPE html>
+<html lang="en" data-theme="mix">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stockroom - Inventory Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div id="toast-container" aria-live="polite"></div>
 
-    <header class="app-header">
-      <div class="brand">
-        <h1>Stockroom</h1>
-        <p>Inventory and product management</p>
-      </div>
-      <button class="btn btn-primary" id="addProductBtn" type="button">
-        + Add Product
-      </button>
-    </header>
-
-    <main class="container">
-      <section class="dashboard" aria-label="Inventory summary">
-        <article class="card stat">
-          <span class="stat-label">Total Products</span
-          ><strong class="stat-value" id="statProducts">0</strong>
-        </article>
-        <article class="card stat">
-          <span class="stat-label">Total Stock Items</span
-          ><strong class="stat-value" id="statStock">0</strong>
-        </article>
-        <article class="card stat stat-warning">
-          <span class="stat-label">Low Stock Alerts</span
-          ><strong class="stat-value" id="statLow">0</strong>
-        </article>
-        <article class="card stat">
-          <span class="stat-label">Total Inventory Value</span
-          ><strong class="stat-value" id="statValue">0</strong>
-        </article>
-      </section>
-
-      <section class="card controls">
-        <input
-          type="search"
-          id="searchInput"
-          placeholder="Search by name, ID, or category..."
-          aria-label="Search products"
-        />
-        <select id="categoryFilter" aria-label="Filter by category">
-          <option value="">All categories</option>
-        </select>
-      </section>
-
-      <section class="card table-card">
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Product ID</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th class="num">Quantity</th>
-                <th class="num">Price</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="productTableBody"></tbody>
-          </table>
-        </div>
-        <div class="empty-state" id="emptyState" hidden>
-          <div class="empty-icon" aria-hidden="true">&#128230;</div>
-          <h2>No products found</h2>
-          <p>
-            Try a different search, or add your first product to get started.
-          </p>
-        </div>
-      </section>
-    </main>
-
-    <div class="modal-overlay" id="modalOverlay" hidden>
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modalTitle"
-      >
-        <h2 id="modalTitle">Add Product</h2>
-        <form id="productForm" novalidate>
-          <label for="productId">Product ID</label>
-          <input
-            type="text"
-            id="productId"
-            name="product_id"
-            maxlength="30"
-            required
-            placeholder="e.g. P006"
-          />
-
-          <label for="productName">Product name</label>
-          <input
-            type="text"
-            id="productName"
-            name="name"
-            maxlength="100"
-            required
-            placeholder="e.g. Desk Lamp"
-          />
-
-          <label for="productCategory">Category</label>
-          <input
-            type="text"
-            id="productCategory"
-            name="category"
-            maxlength="50"
-            required
-            list="categoryList"
-            placeholder="e.g. Home"
-          />
-          <datalist id="categoryList"></datalist>
-
-          <div class="form-row">
-            <div>
-              <label for="productQty">Quantity</label>
-              <input
-                type="number"
-                id="productQty"
-                name="quantity"
-                min="0"
-                step="1"
-                required
-                placeholder="0"
-              />
-            </div>
-            <div>
-              <label for="productPrice">Price</label>
-              <input
-                type="number"
-                id="productPrice"
-                name="price"
-                min="0"
-                step="0.01"
-                required
-                placeholder="0.00"
-              />
-            </div>
+  <header class="hero">
+    <span class="float s1" aria-hidden="true">⭐</span>
+    <span class="float s2" aria-hidden="true">🚀</span>
+    <span class="float s3" aria-hidden="true">✨</span>
+    <span class="float s4" aria-hidden="true">🎯</span>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="brand">
+          <span class="logo-sticker" aria-hidden="true">📦</span>
+          <div>
+            <h1>Stockroom</h1>
+            <p>Know what you have. Know what to reorder.</p>
           </div>
-
-          <p class="form-error" id="formError" hidden></p>
-          <div class="modal-actions">
-            <button type="button" class="btn btn-ghost" id="cancelBtn">
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-primary" id="saveBtn">
-              Save
-            </button>
-          </div>
-        </form>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-ghost-hero" id="themeBtn" type="button" title="Switch theme">🌗 Mix</button>
+          <button class="btn btn-lime" id="addProductBtn" type="button">+ Add Product</button>
+        </div>
       </div>
+      <div class="restock" id="restockStrip" aria-label="Items that need restocking"></div>
     </div>
+  </header>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  </body>
+  <main class="container">
+    <section class="dashboard" aria-label="Inventory summary">
+      <article class="stat violet"><span class="stat-emoji" aria-hidden="true">🛍️</span><span class="stat-label">Total Products</span><strong class="stat-value" id="statProducts">0</strong></article>
+      <article class="stat sky"><span class="stat-emoji" aria-hidden="true">📚</span><span class="stat-label">Total Stock Items</span><strong class="stat-value" id="statStock">0</strong></article>
+      <article class="stat pink"><span class="stat-emoji" aria-hidden="true">🚨</span><span class="stat-label">Low Stock Alerts</span><strong class="stat-value" id="statLow">0</strong></article>
+      <article class="stat lime"><span class="stat-emoji" aria-hidden="true">💰</span><span class="stat-label">Total Inventory Value</span><strong class="stat-value" id="statValue">0</strong></article>
+    </section>
+
+    <section class="charts" aria-label="Inventory charts">
+      <article class="panel">
+        <h2>🍩 Stock health</h2>
+        <div class="chart-body" id="donutChart"></div>
+      </article>
+      <article class="panel">
+        <h2>📊 Units per category</h2>
+        <div class="chart-body" id="barChart"></div>
+      </article>
+      <article class="panel">
+        <h2>🏆 Most valuable items</h2>
+        <div class="chart-body" id="valueChart"></div>
+      </article>
+    </section>
+
+    <section class="panel controls">
+      <div class="search-wrap">
+        <span aria-hidden="true">🔍</span>
+        <input type="search" id="searchInput" placeholder="Search by name, ID, or category..." aria-label="Search products">
+      </div>
+      <select id="categoryFilter" aria-label="Filter by category"><option value="">🗂️ All categories</option></select>
+    </section>
+
+    <section class="panel table-card">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Product ID</th><th>Product Name</th><th>Category</th>
+              <th class="num">Quantity</th><th class="num">Price</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productTableBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" hidden>
+        <div class="empty-icon" aria-hidden="true">🫙</div>
+        <h2>Nothing on this shelf</h2>
+        <p>No products match. Clear the search, or add a new product to fill it up.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="modalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <span class="modal-sticker" aria-hidden="true" id="modalSticker">🆕</span>
+      <h2 id="modalTitle">Add Product</h2>
+      <form id="productForm" novalidate>
+        <label for="productId">Product ID</label>
+        <input type="text" id="productId" name="product_id" maxlength="30" required placeholder="e.g. P006">
+
+        <label for="productName">Product name</label>
+        <input type="text" id="productName" name="name" maxlength="100" required placeholder="e.g. Desk Lamp">
+
+        <label for="productCategory">Category</label>
+        <input type="text" id="productCategory" name="category" maxlength="50" required list="categoryList" placeholder="e.g. Home">
+        <datalist id="categoryList"></datalist>
+
+        <div class="form-row">
+          <div>
+            <label for="productQty">Quantity</label>
+            <input type="number" id="productQty" name="quantity" min="0" step="1" required placeholder="0">
+          </div>
+          <div>
+            <label for="productPrice">Price</label>
+            <input type="number" id="productPrice" name="price" min="0" step="0.01" required placeholder="0.00">
+          </div>
+        </div>
+
+        <p class="form-error" id="formError" hidden></p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-plain" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-violet" id="saveBtn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
 </html>
