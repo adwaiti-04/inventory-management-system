@@ -12,7 +12,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open http://127.0.0.1:5000. The database (`database/inventory.db`) is created automatically and seeded with 5 sample products on first run only.
+Open http://127.0.0.1:3000. The database (`database/inventory.db`) is created automatically and seeded with 5 sample products on first run only.
 
 ## Architecture
 
@@ -39,7 +39,7 @@ Flow: the browser loads `/`, then `script.js` calls `/api/dashboard` and `/api/p
 Example:
 
 ```bash
-curl -X POST http://127.0.0.1:5000/api/products \
+curl -X POST http://127.0.0.1:3000/api/products \
   -H "Content-Type: application/json" \
   -d '{"product_id":"P006","name":"Desk Lamp","category":"Home","quantity":10,"price":899}'
 ```
